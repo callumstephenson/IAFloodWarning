@@ -79,7 +79,15 @@ def stations_by_river(stations):
     return river_stations
 
 def rivers_by_station_number(stations, N):
-    '''
+    '''when given a list of MonitoringStation objects and Nth place in list
+    functoin returns amount of rivers with number of stations >= Nth place
+
+    args:
+        stations: list of MonitoringStation objects
+        N: Nth place in list
+    
+    returns:
+        (name,number of stations) for all stations >= Nth place.
     '''
     river_stations = stations_by_river(stations)
     if N > len(river_stations):
