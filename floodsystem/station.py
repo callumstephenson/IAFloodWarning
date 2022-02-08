@@ -38,3 +38,24 @@ class MonitoringStation:
         d += "   river:         {}\n".format(self.river)
         d += "   typical range: {}".format(self.typical_range)
         return d
+
+    def typical_range_consistent(self):
+        'Checking to see if MonitoringStation object has valid tuple as typical range'
+        return type(self.typical_range) is tuple
+
+def inconsistent_typical_range_stations(stations):
+    '''Given a list of MonitoringStation objects, returns a list of stations with inconsistent
+    data for typical range
+
+    args:
+        station list of MonitoringStation objects
+    
+    return:
+        list of MonitoringStation objects with inconsistent data
+    '''
+    inconsistent_stations = []
+    for each in stations:
+        if station.typical_range_consistent() == False:
+            inconsistent_stations.append(each)
+    return inconsistent_stations
+    
