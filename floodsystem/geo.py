@@ -5,6 +5,7 @@
 geographical data.
 
 """
+from operator import truediv
 from haversine import haversine, Unit
 from .utils import sorted_by_key  # noqa
 
@@ -76,3 +77,20 @@ def stations_by_river(stations):
     for each in stations:
         river_stations[each.river].append(each.name)
     return river_stations
+
+def rivers_by_station_number(stations, N):
+    '''
+    '''
+    river_stations = stations_by_river(stations)
+    if N > len(river_stations):
+        raise ValueError
+    rivers_station_number = []
+    for key in river_stations.keys():
+        x = len(river_stations[key])
+        rivers_station_number.append((key,x))
+    rivers_station_number = sorted_by_key(rivers_station_number, 1, reverse=True)
+    stations_above_n = []
+    for each in rivers_station_number:
+        if each[1] >= rivers_station_number[N][1]:
+            stations_above_n.append(each)
+    return stations_above_n
