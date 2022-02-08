@@ -44,4 +44,35 @@ def stations_within_radius(stations, centre, r):
         if each[1] <= r:
             within_radius.append(each)
     return within_radius
+
+def rivers_with_stations(stations):
+    '''when given a set of MonitoringStation objects, this function returns the name of the rivers
+    with a monitoring station
     
+    args:
+        list of MonitoringStation objects
+    
+    return:
+        set of rivers
+    '''
+    rivers = set()
+    for each in stations:
+        river_name = each.river
+        rivers.add(river_name)
+    return rivers
+
+def stations_by_river(stations):
+    '''when given a list of MonitoringStation objects, this function returns a dictionary
+    of river:stations on river. 
+
+    args:
+        list of MonitoringStation objects
+    
+    return:
+        dict of rivers:stations on river
+    '''
+    rivers = rivers_with_stations(stations)
+    river_stations = {river:[] for river in list(rivers)}
+    for each in stations:
+        river_stations[each.river].append(each.name)
+    return river_stations
