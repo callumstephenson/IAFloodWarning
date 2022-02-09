@@ -10,6 +10,7 @@ def run():
     for each in x.values():
         each.sort()
     print(x["River Aire"]) , print(x["River Cam"]) , print(x["River Thames"])
+    print(len(x))
     return None
 
 if __name__ == '__main__':
