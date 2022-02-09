@@ -46,7 +46,7 @@ def stations_within_radius(stations, centre, r):
             within_radius.append(each)
     return within_radius
 
-def rivers_with_stations(stations):
+def rivers_with_station(stations):
     '''when given a set of MonitoringStation objects, this function returns the name of the rivers
     with a monitoring station
     
@@ -72,7 +72,7 @@ def stations_by_river(stations):
     return:
         dict of rivers:stations on river
     '''
-    rivers = rivers_with_stations(stations)
+    rivers = rivers_with_station(stations)
     river_stations = {river:[] for river in list(rivers)}
     for each in stations:
         river_stations[each.river].append(each.name)
