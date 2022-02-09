@@ -5,6 +5,7 @@
 geographical data.
 
 """
+from operator import truediv
 from haversine import haversine, Unit
 from .utils import sorted_by_key  # noqa
 
@@ -45,8 +46,59 @@ def stations_within_radius(stations, centre, r):
             within_radius.append(each)
     return within_radius
 
-def rivers_with_station(stations):
+def rivers_with_stations(stations):
+    '''when given a set of MonitoringStation objects, this function returns the name of the rivers
+    with a monitoring station
+    
+    args:
+        list of MonitoringStation objects
+    
+    return:
+        set of rivers
+    '''
     rivers = set()
-    for n in stations:
-        rivers.add(stations[n].river)
+    for each in stations:
+        river_name = each.river
+        rivers.add(river_name)
     return rivers
+
+def stations_by_river(stations):
+    '''when given a list of MonitoringStation objects, this function returns a dictionary
+    of river:stations on river. 
+
+    args:
+        list of MonitoringStation objects
+    
+    return:
+        dict of rivers:stations on river
+    '''
+    rivers = rivers_with_stations(stations)
+    river_stations = {river:[] for river in list(rivers)}
+    for each in stations:
+        river_stations[each.river].append(each.name)
+    return river_stations
+
+def rivers_by_station_number(stations, N):
+    '''when given a list of MonitoringStation objects and Nth place in list
+    functoin returns amount of rivers with number of stations >= Nth place
+
+    args:
+        stations: list of MonitoringStation objects
+        N: Nth place in list
+    
+    returns:
+        (name,number of stations) for all stations >= Nth place.
+    '''
+    river_stations = stations_by_river(stations)
+    if N > len(river_stations):
+        raise ValueError
+    rivers_station_number = []
+    for key in river_stations.keys():
+        x = len(river_stations[key])
+        rivers_station_number.append((key,x))
+    rivers_station_number = sorted_by_key(rivers_station_number, 1, reverse=True)
+    stations_above_n = []
+    for each in rivers_station_number:
+        if each[1] >= rivers_station_number[N][1]:
+            stations_above_n.append(each)
+    return stations_above_n
