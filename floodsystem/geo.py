@@ -44,3 +44,9 @@ def stations_within_radius(stations, centre, r):
         if each[1] <= r:
             within_radius.append(each)
     return within_radius
+
+def rivers_with_station(stations):
+    rivers = set()
+    for n in stations:
+        rivers.add(stations[n].river)
+    return rivers
