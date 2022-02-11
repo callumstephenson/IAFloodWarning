@@ -24,8 +24,7 @@ def stations_by_distance(stations, p):
         coord = each.coord
         dist = haversine(p,coord)
         distance_list.append((each,float(dist)))
-    distance_list = sorted_by_key(distance_list,1)
-    return distance_list
+    return sorted_by_key(distance_list,1)
 
 def stations_within_radius(stations, centre, r):
     '''when given a list of stations, centre, and radius, this function outputs a list
