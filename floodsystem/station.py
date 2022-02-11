@@ -46,7 +46,12 @@ class MonitoringStation:
     
 
     def relative_water_level(self):
-        pass
+        '''Takes self as argument (MonitoringStation object), returns a value ranging from 0.0 to 1.0 describing the latest water
+        level relative to typical'''
+        if (not self.typical_range_consistent()) or (self.latest_level == None):
+            return None
+        else:
+            return (self.latest_level-self.typical_range[0])/(self.typical_range[1]-self.typical_range[0])
 
 def inconsistent_typical_range_stations(stations):
     '''Given a list of MonitoringStation objects, returns a list of stations with inconsistent
