@@ -37,11 +37,16 @@ class MonitoringStation:
         d += "   town:          {}\n".format(self.town)
         d += "   river:         {}\n".format(self.river)
         d += "   typical range: {}".format(self.typical_range)
+        d += "   latest level:  {}".format(self.latest_level)
         return d
 
     def typical_range_consistent(self):
         'Checking to see if MonitoringStation object has valid tuple as typical range'
         return type(self.typical_range) is tuple
+    
+
+    def relative_water_level(self):
+        pass
 
 def inconsistent_typical_range_stations(stations):
     '''Given a list of MonitoringStation objects, returns a list of stations with inconsistent
