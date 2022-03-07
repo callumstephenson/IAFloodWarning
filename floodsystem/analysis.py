@@ -1,11 +1,14 @@
-import matplotlib.dates
-import numpy as np
+import numpy as np 
+import matplotlib
+from matplotlib.dates import date2num
 
 def polyfit(dates, levels, p):
-    ''' Convert dates from datetime objects to a list of floats
-    '''
-    x = matplotlib.dates.date2num(dates)
-    p_coeff = np.polyfit(x - x[0], levels, p)
+    
+    time = date2num(dates)
+    d0 = time[0]
+    
+    p_coeff = np.polyfit(time-d0, levels, p)
     poly = np.poly1d(p_coeff)
+    
+    return poly, d0
 
-    return poly, x[0]
