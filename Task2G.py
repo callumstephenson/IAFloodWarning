@@ -1,56 +1,50 @@
-from floodsystem.stationdata import build_station_list, update_water_levels
+import matplotlib
+import datetime
+from floodsystem.stationdata import build_station_list, update_water_levels 
+from floodsystem.flood import stations_highest_rel_level
+from matplotlib.dates import date2num
 from floodsystem.datafetcher import fetch_measure_levels
 from floodsystem.analysis import polyfit
-import numpy as np
-import datetime
-import matplotlib.dates
+
+def predicted_water_level(station, prediction):
+    return (prediction - station.typical_range[0]) / (station.typical_range[1] - station.typical_range[0])
 
 def run():
-    risk_severe = []
-    risk_high = []
-    risk_moderate = []
-    risk_low = []
-    not_applicable = []
     stations = build_station_list()
     update_water_levels(stations)
-    for each in stations:
-        if each.typical_range_consistent() and each.latest_level is not None:
-            percentage = each.relative_water_level(each.latest_level)
-            if percentage > 1.6:
-                risk_severe.append(each.name)
-            elif percentage > 1.2:
-                risk_high.append(each.name)
-            elif percentage > 0.8:
-                risk_moderate.append(each.name)
-            else:
-                risk_low.append(each.name)
+    station = stations_highest_rel_level(stations, 20)
+    target_stations = []
+    for each in station:
+        dates, levels = fetch_measure_levels(each.measure_id, dt=datetime.timedelta(days=2))
+        if len(dates) < 1 or len(levels) < 1:
+            continue
+        poly, d0 = polyfit(dates, levels, 4)
+        time = date2num(dates)
+        current = max(time - d0)
+        prediction = poly(current + 1)
+        rise = predicted_water_level(each, prediction) - each.relative_water_level()
+        if predicted_water_level(each, prediction) > each.relative_water_level():
+            target_stations.append([each.name, rise])
+            print("{}:\n\tRelative water level: {}\n\tPredicted relative water level: {}\n\tRise: {}".format(
+                each.name, each.relative_water_level(), predicted_water_level(each, prediction), rise))
+    target_towns = []
+    for i, stations_risk in enumerate(target_stations):
+        if stations_risk[0] in [towns for towns, count in target_towns]:
+            target_towns[i][1] += stations_risk[1]
         else:
-            not_applicable.append(each.name)
-        if each.name in risk_high:
-            try:
-                measure_id = each.measure_id
-                dates, levels = fetch_measure_levels(measure_id, datetime.timedelta(days=5))
-                bestfit, offset = polyfit(dates, levels, p=4)
-                derivative = np.polyder(bestfit)
-                gradient = derivative(matplotlib.dates.date2num(dates[0]) - offset)
-                if gradient > 1:
-                    risk_high.remove(each.name)
-                    risk_severe.append(each.name)
-            except IndexError:
-                pass
-            except KeyError:
-                pass
-    
-    risk_severe.sort()
-    risk_high.sort()
-    risk_moderate.sort()
-    risk_low.sort()
-    not_applicable .sort()
-    print(f"Severe Risk:\n{risk_severe}\n")
-    print(f"High Risk:\n{risk_high}\n")
-    print(f"Moderate Risk:\n{risk_moderate}\n")
-    print(f"Low Risk:\n{len(risk_low)} stations\n")
-    print(f"No Reliable Data:\n{len(not_applicable)} stations\n")
-
+            target_towns.append(stations_risk[:])
+    print('List of target towns and the estimated flood risk:')
+    print(target_towns)
+    ratings = ['low', 'moderate', 'high', 'severe']
+    for town, risk in target_towns:
+        rating_factor = 0  
+        if risk > 0.5:
+            rating_factor = 1  
+        if risk > 5:
+            rating_factor = 2  
+        if risk > 10:
+            rating_factor = 3  
+        print('{}:\n\t{}'.format(town, ratings[rating_factor]))
+        
 if __name__ == "__main__":
     run()
