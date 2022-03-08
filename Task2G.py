@@ -33,7 +33,7 @@ def run():
             target_towns[i][1] += stations_risk[1]
         else:
             target_towns.append(stations_risk[:])
-    print('List of target towns and the estimated flood risk:')
+    print('List of towns and the estimated flood risk:')
     print(target_towns)
     ratings = ['low', 'moderate', 'high', 'severe']
     for town, risk in target_towns:
