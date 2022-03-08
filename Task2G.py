@@ -6,9 +6,6 @@ from matplotlib.dates import date2num
 from floodsystem.datafetcher import fetch_measure_levels
 from floodsystem.analysis import polyfit
 
-def predicted_water_level(station, prediction):
-    return (prediction - station.typical_range[0]) / (station.typical_range[1] - station.typical_range[0])
-
 def run():
     stations = build_station_list()
     update_water_levels(stations)
@@ -22,11 +19,12 @@ def run():
         time = date2num(dates)
         current = max(time - d0)
         prediction = poly(current + 1)
-        rise = predicted_water_level(each, prediction) - each.relative_water_level()
-        if predicted_water_level(each, prediction) > each.relative_water_level():
+        predicted_water_level = (prediction - each.typical_range[0]) / (each.typical_range[1] - each.typical_range[0])
+        rise =  predicted_water_level - each.relative_water_level()
+        if  predicted_water_level > each.relative_water_level():
             target_stations.append([each.name, rise])
             print("{}:\n\tRelative water level: {}\n\tPredicted relative water level: {}\n\tRise: {}".format(
-                each.name, each.relative_water_level(), predicted_water_level(each, prediction), rise))
+                each.name, each.relative_water_level(), predicted_water_level, rise))
     target_towns = []
     for i, stations_risk in enumerate(target_stations):
         if stations_risk[0] in [towns for towns, count in target_towns]:
