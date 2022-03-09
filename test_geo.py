@@ -67,7 +67,6 @@ def test_rivers_by_station_number():
 
     river_list = rivers_by_station_number(stations, 2)
 
-    # Multiple entries with same number in Nth position
     assert len(river_list) == 2
 
     assert "River 3" not in [item[0] for item in river_list]
