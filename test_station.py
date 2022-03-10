@@ -37,8 +37,8 @@ def test_inconsistent_typical_range_stations():
     river = "test_river"
     town = "test_town"
     test_1 = None
-    test_2 = (4, 2)
-    test_3 = (1, 3)
+    test_2 = (-2.5, 3.5)
+    test_3 = (3.5, -2.5)
     s1 = MonitoringStation(s_id, m_id, label, coord, test_1, river, town)
     s2 = MonitoringStation(s_id, m_id, label, coord, test_2, river, town)
     s3 = MonitoringStation(s_id, m_id, label, coord, test_3, river, town)
@@ -46,6 +46,6 @@ def test_inconsistent_typical_range_stations():
     stations = [s1, s2, s3]
     test_data = inconsistent_typical_range_stations(stations)
     assert s1 in test_data
-    assert s2 in test_data
-    assert s3 in test_data
+    assert s2 not in test_data
+    assert s3 not in test_data
 
